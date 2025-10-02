@@ -1,5 +1,7 @@
 import azure.functions as func
 import logging
+import json
+from shared import cosmosdb_client
 
 app = func.FunctionApp(http_auth_level=func.AuthLevel.FUNCTION)
 
@@ -11,26 +13,77 @@ def http_get(req: func.HttpRequest) -> func.HttpResponse:
 
     return func.HttpResponse(f"Hello, {name}!")
 
-@app.route(route="httppost", methods=["POST"])
-def http_post(req: func.HttpRequest) -> func.HttpResponse:
+@app.route(route="mood", methods=["POST"])
+def mood_post(req: func.HttpRequest) -> func.HttpResponse:
     try:
-        req_body = req.get_json()
-        name = req_body.get('name')
-        age = req_body.get('age')
+        # Log the raw request body for debugging
+        raw_body = req.get_body()
+        logging.info(f"Raw request body: {raw_body}")
         
-        logging.info(f"Processing POST request. Name: {name}")
-
-        if name and isinstance(name, str) and age and isinstance(age, int):
-            return func.HttpResponse(f"Hello, {name}! You are {age} years old!")
-        else:
+        # Check if body is empty
+        if not raw_body:
             return func.HttpResponse(
-                "Please provide both 'name' and 'age' in the request body.",
+                json.dumps({"error": "Request body is empty"}),
+                mimetype="application/json",
                 status_code=400
             )
-    except ValueError:
+        
+        # Try to parse JSON
+        req_body = req.get_json()
+        if req_body is None:
+            return func.HttpResponse(
+                json.dumps({"error": "Request body is not valid JSON"}),
+                mimetype="application/json",
+                status_code=400
+            )
+        
+        logging.info(f"Parsed JSON body: {req_body}")
+        
+        text = req_body.get('text')
+        user_id = req_body.get('userid')
+
+        # Validate required fields
+        if not text or not isinstance(text, str):
+            return func.HttpResponse(
+                json.dumps({"error": "Missing or invalid 'text' field"}),
+                mimetype="application/json",
+                status_code=400
+            )
+        
+        if not user_id or not isinstance(user_id, str):
+            return func.HttpResponse(
+                json.dumps({"error": "Missing or invalid 'userid' field"}),
+                mimetype="application/json",
+                status_code=400
+            )
+
+        mood_db = cosmosdb_client.MoodDatabase()
+        mood_id = mood_db.create_mood_entry(
+            user_id=user_id,
+            text=text,
+            analysis=None
+        )
+
+        logging.info(f"Processing POST request. Text: {text}, User ID: {user_id}, Mood ID: {mood_id}")
+
         return func.HttpResponse(
-            "Invalid JSON in request body",
+            json.dumps({"mood_id": mood_id}),
+            mimetype="application/json"
+        )
+        
+    except ValueError as e:
+        logging.error(f"ValueError: {str(e)}")
+        return func.HttpResponse(
+            json.dumps({"error": f"Invalid JSON in request body: {str(e)}"}),
+            mimetype="application/json",
             status_code=400
+        )
+    except Exception as e:
+        logging.error(f"Unexpected error: {str(e)}")
+        return func.HttpResponse(
+            json.dumps({"error": f"Internal server error: {str(e)}"}),
+            mimetype="application/json",
+            status_code=500
         )
 
 
