@@ -1,0 +1,12 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "FUNCTIONS_WORKER_RUNTIME": "python",
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "COSMOS_ENDPOINT": "https://your-cosmos-account.documents.azure.com:443/",
+    "COSMOS_KEY": "your-cosmos-primary-key-here",
+    "GEMINI_API_KEY": "your-gemini-api-key-here",
+    "GEMINI_MODEL": "gemini-1.5-flash"
+  },
+  "ConnectionStrings": {}
+}

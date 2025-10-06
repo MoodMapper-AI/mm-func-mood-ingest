@@ -35,7 +35,7 @@ class MoodDatabase:
         self,
         user_id: str,
         text: str,
-        analysis: None = None,
+        analysis: str,
     ) -> Dict[str, Any]:
         """
         Store new mood entry in database.
@@ -58,13 +58,13 @@ class MoodDatabase:
             "user_id": user_id,
             "text": text,
             "timestamp": datetime.utcnow().isoformat(),
-            "analysis": None
+            "analysis": analysis
         }
         
         try:
             created = self.container.create_item(body=mood_doc)
             logger.info(f"Mood entry created: {created['id']} for user {user_id}")
-            return created['id']
+            return created
         except exceptions.CosmosHttpResponseError as e:
             logger.error(f"Failed to create mood entry: {e}")
             raise

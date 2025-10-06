@@ -1,0 +1,31 @@
+analyze_mood - analyze user text and returns a recommendation for a scripture(book,chapter,verse/verses,playlist recommendation(with song name,artist name, url to youtube music, reason for the song)) to help/aid the user
+
+return only json format: 
+{"mood": "happy",
+"confidence": 0.95,
+"recommendation": {
+  "book": "Psalms",
+  "chapter": "100",
+  "verse": "1-5",
+  "scripture_text": "Make a joyful noise to the Lord, all the earth! Serve the Lord with gladness! Come into his presence with singing! Know that the Lord, he is God! It is he who made us, and we are his; we are his people, and the sheep of his pasture. Enter his gates with thanksgiving, and his courts with praise! Give thanks to him; bless his name! For the Lord is good; his steadfast love endures forever, and his faithfulness to all generations.",
+  "playlist": [{
+    "song_name": "Happy",
+    "artist_name": "Pharrell Williams",
+    "url": "https://music.youtube.com/watch?v=ZbZSe6N_BXs&list=RDAMVMZbZSe6N_BXs",
+    "reason": "This song captures the essence of joy and celebration, perfectly complementing the uplifting message of Psalm 100."
+  },
+  {
+    "song_name": "Best Day of My Life",
+    "artist_name": "American Authors",
+    "url": "https://music.youtube.com/watch?v=Y66j_BUCBMY&list=RDAMVMY66j_BUCBMY",
+    "reason": "With its upbeat tempo and positive lyrics, this song aligns well with the themes of gratitude and joy found in Psalm 100."
+  },
+  {
+    "song_name": "Walking on Sunshine",
+    "artist_name": "Katrina and the Waves",
+    "url": "https://music.youtube.com/watch?v=iPUmE-tne5U&list=RDAMVMiPUmE-tne5U",
+    "reason": "This classic feel-good anthem mirrors the exuberant praise and happiness expressed in Psalm 100."
+  }
+  ]
+}
+}
